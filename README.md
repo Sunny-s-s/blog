@@ -68,10 +68,4 @@ Fork 本仓库
 许可证
 本项目采用 MIT 许可证 - 查看 LICENSE 文件了解详细信息
 联系方式
-Email: example@example.com
-GitHub: github.com/example
-微信: myblog-tech
-致谢
-感谢所有为本项目做出贡献的开发者！
-
-⭐️ 如果这个项目对你有帮助，欢迎 star 支持！
+Email: 1915796323@qq.com
