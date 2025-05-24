@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>注册页面</title>
+  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+
+      <h1 class="text-center mb-4">用户注册</h1>
+      <form action="/register" method="post">
+        <div class="form-group">
+          <label for="username">用户名</label>
+          <input type="text" name="username" class="form-control" id="username" placeholder="请输入用户名" required>
+        </div>
+        <div class="form-group">
+          <label for="id">用户ID</label>
+          <input type="number" name="id" class="form-control" id="id" placeholder="请输入ID" required>
+        </div>
+        <div class="form-group">
+          <label for="password">密码</label>
+          <input type="text" name="password" class="form-control" id="password" placeholder="请输入密码" required>
+        </div>
+        <button type="submit" class="btn btn-primary">注册</button>
+        <p th:if="${error}" th:text="${error}" style="color: red; margin-bottom: 15px;"></p>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+</body>
+</html>

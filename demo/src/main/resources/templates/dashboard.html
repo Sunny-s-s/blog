@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的博客 | 主页</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .blog-header {
+            border-bottom: 1px solid #e5e5e5;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .blog-header.scrolled {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .blog-header-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .blog-header-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-scroller {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .nav-scroller .nav-link {
+            color: #555;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-scroller .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-scroller .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-scroller .nav-link:hover::after {
+            width: 70%;
+        }
+
+        .jumbotron {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .jumbotron::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .blog-post {
+            margin-bottom: 4rem;
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .blog-post.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .blog-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .blog-post-title {
+            margin-bottom: .25rem;
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+
+        .blog-post:hover .blog-post-title {
+            color: var(--primary-color);
+        }
+
+        .blog-post-meta {
+            color: #727272;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .sidebar-card.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sidebar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .footer {
+            background: var(--secondary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        /* 用户欢迎信息动画 */
+        .user-welcome {
+            display: inline-block;
+            position: relative;
+        }
+
+        .user-welcome::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .user-welcome:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    </style>
+</head>
+<body>
+<header class="blog-header py-3">
+    <div class="container">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="col-4 pt-1">
+                <a class="text-muted" href="#">
+                    <i class="fas fa-rss"></i> 订阅
+                </a>
+            </div>
+            <div class="col-4 text-center">
+                <a class="blog-header-logo text-dark" href="/dashboard">我的博客</a>
+            </div>
+            <div class="col-4 d-flex justify-content-end align-items-center">
+                <span class="me-3 user-welcome" th:text="'欢迎, ' + ${user.username} + '!'"></span>
+                <a class="btn btn-sm btn-outline-secondary" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="nav-scroller py-1 mb-2">
+    <div class="container">
+        <nav class="nav d-flex justify-content-between">
+            <a class="p-2 text-muted" href="#"><i class="fas fa-code"></i> 技术</a>
+            <a class="p-2 text-muted" href="#"><i class="fas fa-heart"></i> 生活</a>
+            <a class="p-2 text-muted" href="#"><i class="fas fa-plane"></i> 旅行</a>
+            <a class="p-2 text-muted" href="#"><i class="fas fa-camera"></i> 摄影</a>
+            <a class="p-2 text-muted" href="#"><i class="fas fa-utensils"></i> 美食</a>
+        </nav>
+    </div>
+</div>
+
+<div class="container">
+    <div class="jumbotron p-4 p-md-5 text-white rounded">
+        <div class="col-md-6 px-0 animate__animated animate__fadeIn">
+            <h1 class="display-4 font-italic">欢迎来到我的博客空间</h1>
+            <p class="lead my-3">在这里分享我的技术心得和生活感悟，记录成长的点点滴滴。</p>
+            <p class="lead mb-0">
+                <a href="#" class="text-white font-weight-bold animate__animated animate__pulse animate__infinite animate__slower">
+                    开始探索 <i class="fas fa-arrow-right"></i>
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h3 class="pb-4 mb-4 font-italic border-bottom animate__animated animate__fadeIn">
+                    最新文章
+                </h3>
+
+                <div class="blog-post" id="post1">
+                    <h2 class="blog-post-title">Spring Boot 入门指南</h2>
+                    <p class="blog-post-meta">2023年6月15日 by <a href="#">技术达人</a></p>
+                    <p>本文将从零开始介绍如何使用Spring Boot快速构建Web应用程序...</p>
+                    <hr>
+                    <p>包含常见配置、数据库连接和REST API开发等内容。</p>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-book-reader"></i> 阅读全文
+                    </a>
+                </div>
+
+                <div class="blog-post" id="post2">
+                    <h2 class="blog-post-title">我的旅行日记</h2>
+                    <p class="blog-post-meta">2023年5月28日 by <a href="#">旅行者</a></p>
+                    <p>记录我在长大的两年旅程，分享实用旅行贴士...</p>
+                    <hr>
+                    <p>包含美食推荐、交通指南和隐藏景点。</p>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-book-reader"></i> 阅读全文
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="sidebar-card" id="about">
+                    <h4 class="font-italic"><i class="fas fa-info-circle"></i> 关于</h4>
+                    <p class="mb-0">这是一个个人博客网站，主要用于分享技术文章和生活随笔。记录成长的点滴，分享有价值的内容。</p>
+                </div>
+
+                <div class="sidebar-card" id="archive">
+                    <h4 class="font-italic"><i class="fas fa-archive"></i> 归档</h4>
+                    <ol class="list-unstyled mb-0">
+                        <li><a href="#"><i class="fas fa-calendar-alt"></i> 2023年6月</a></li>
+                        <li><a href="#"><i class="fas fa-calendar-alt"></i> 2023年5月</a></li>
+                        <li><a href="#"><i class="fas fa-calendar-alt"></i> 2023年4月</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p>博客模板基于 <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a> 构建。</p>
+            </div>
+            <div class="col-md-6 text-right">
+                <a href="#" class="text-white mr-3"><i class="fab fa-github"></i> GitHub</a>
+                <a href="#" class="text-white mr-3"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#" class="text-white"><i class="fab fa-weixin"></i> 微信</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 滚动时添加动画
+    document.addEventListener('DOMContentLoaded', function() {
+        // 滚动时头部变化
+        const header = document.querySelector('.blog-header');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // 滚动时显示返回顶部按钮
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // 返回顶部功能
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 文章和侧边栏动画
+        const animateOnScroll = function() {
+            const blogPosts = document.querySelectorAll('.blog-post');
+            const sidebarCards = document.querySelectorAll('.sidebar-card');
+
+            blogPosts.forEach(post => {
+                const postPosition = post.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+
+                if (postPosition < screenPosition) {
+                    post.classList.add('animated');
+                }
+            });
+
+            sidebarCards.forEach(card => {
+                const cardPosition = card.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+
+                if (cardPosition < screenPosition) {
+                    card.classList.add('animated');
+                }
+            });
+        };
+
+        // 初始加载时触发一次
+        animateOnScroll();
+
+        // 滚动时触发
+        window.addEventListener('scroll', animateOnScroll);
+
+        // 按钮点击动画
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => {
+                    this.classList.remove('animate__animated', 'animate__pulse');
+                }, 300);
+            });
+        });
+    });
+</script>
+</body>
+</html>
